@@ -27,7 +27,7 @@ mkdir -p ~/.local/bin
 cp pk ~/.local/bin
 ```
 
-*For mac*: if ~/.local/bin isnt already in path add `export PATH="$HOME:/.local/bin:$PATH" to your .bashrc (or equiv)
+*For mac*: if ~/.local/bin isnt already in path add `export PATH="$HOME:/.local/bin:$PATH"` to your .bashrc (or equiv)
 
 
 ya thanks
