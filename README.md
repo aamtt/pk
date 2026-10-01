@@ -17,6 +17,9 @@ pk -n 3 /var/log/syslog
 
 ### Quick install (mac + linux)
 
+Prerequisites:
+- `cc` (or `gcc` or `clang`)
+
 ```sh
 curl -fsSL https://raw.githubusercontent.com/aamtt/pk/main/main.c -o pk.c
 cc -O2 -o pk pk.c
@@ -24,14 +27,7 @@ mkdir -p ~/.local/bin
 cp pk ~/.local/bin
 ```
 
-**(for mac)**: if ~/.local/bin isnt already in path add `export PATH="$HOME:/.local/bin:$PATH" to your .bashrc (or equiv)
+*For mac*: if ~/.local/bin isnt already in path add `export PATH="$HOME:/.local/bin:$PATH" to your .bashrc (or equiv)
 
-### Build from source
-
-```sh
-cc -O2 -o pk main.c
-```
-
-boom done throw it in ur path
 
 ya thanks
