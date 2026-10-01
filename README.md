@@ -18,7 +18,8 @@ pk -n 3 /var/log/syslog
 ### Quick install (mac + linux)
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/aamtt/pk/main/main.c -o pk.c | cc -O2 -o pk pk.c
+curl -fsSL https://raw.githubusercontent.com/aamtt/pk/main/main.c -o pk.c
+cc -O2 -o pk pk.c
 mkdir -p ~/.local/bin
 cp pk ~/.local/bin
 ```
