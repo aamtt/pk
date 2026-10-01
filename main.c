@@ -159,7 +159,7 @@ int main (int argc, char **argv) {
   const char *path = NULL;
 
   if (argc == 2 && strcmp(argv[1], "fire") == 0) {
-    fprintf(stdout, "GAME!");
+    fprintf(stdout, "GAME!\n");
     return 0;
   }
 
