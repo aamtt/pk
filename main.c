@@ -137,7 +137,7 @@ static int tail_follow(int fd, long n) {
   for (;;) {
     ssize_t got = read(fd, buf, sizeof buf);
     if (got < 0) {
-      perror("prog");
+      perror("pk");
       return 1;
     }
 
@@ -154,6 +154,11 @@ static int tail_follow(int fd, long n) {
   }
 }
 
+void help(void) {
+    fprintf(stdout, "usage: pk [-n N] [FILE]\n\n");
+    fprintf(stdout, "flags: \t[-h | --help] help command\n\t\t[-vV] version\n");
+}
+
 int main (int argc, char **argv) {
   long n = 10;
   const char *path = NULL;
@@ -164,15 +169,22 @@ int main (int argc, char **argv) {
   }
 
   for (int i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "-n") == 0 && i + 1 < argc)
-      n = atol(argv[++i]);
-    else
-      path = argv[i];
+    if (strcmp(argv[i], "-n") == 0 && i + 1 < argc) {
+        n = atol(argv[++i]);
+    } else if (strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-V") == 0) {
+        fprintf(stdout, "v1.0.0\n");
+        return 0;
+    } else if (strcmp(argv[i], "--help") == 0 || strcmp(argv[i], "-h") == 0) {
+        help();
+        return 0;
+    } else {
+        path = argv[i];
+    }
   }
 
   if (!path) {
     if (isatty(STDIN_FILENO)) {
-      fprintf(stderr, "usage: prog [-n N] FILE\n");
+      fprintf(stderr, "usage: pk [-n N] [FILE]\n");
       return 2;
     }
     return tail_stream(STDIN_FILENO, n);
