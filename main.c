@@ -5,9 +5,15 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <errno.h>
 
-static off_t start_of_last_lines(int fd, long n) {
+static off_t start_of_last_lines(int fd, long n, const char* path) {
   off_t end = lseek(fd, 0, SEEK_END);
+  if (end < 0) {
+    fprintf(stderr, "pk: failed to seek: ");
+    perror(path);
+    return 1;
+  }
   if (n <= 0)
       return end;
 
@@ -67,7 +73,7 @@ static void redraw(char **ring, size_t *lens, long total, long n, int width) {
     size_t len = lens[i % m];
     if (len > (size_t)width)
       len = width;
-    printf("\r\033[2K%.*s", (int)len, ring[i % n]);
+    printf("\r\033[2K%.*s", (int)len, ring[i % m]);
     if (i < total - 1)
       putchar('\n');
   }
@@ -130,8 +136,19 @@ static int tail_stream(int fd, long n) {
   return 0;
 }
 
-static int tail_follow(int fd, long n) {
-  lseek(fd, start_of_last_lines(fd, n), SEEK_SET);
+static int tail_follow(int fd, long n, const char* path) {
+  off_t start = start_of_last_lines(fd, n, path);
+  if (start < 0) {
+      fprintf(stderr, "pk: cannot seek: ");
+      perror(path);
+      return 1;
+  }
+
+  if (lseek(fd, start, SEEK_SET) < 0) {
+      fprintf(stderr, "pk: cannot seek: ");
+      perror(path);
+      return 1;
+  }
 
   char buf[65536];
   for (;;) {
@@ -171,7 +188,18 @@ int main (int argc, char **argv) {
 
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-n") == 0 && i + 1 < argc) {
-        n = atol(argv[++i]);
+        if (++i >= argc) {
+            fprintf(stderr, "pk: -n requires a number\n");
+            return 2;
+        }
+        char *end;
+        errno = 0;
+        n = strtol(argv[i], &end, 10);
+
+        if (errno == ERANGE || *end != '\0' || end == argv[i]) {
+            fprintf(stderr, "pk: invalid number: %s\n", argv[i]);
+            return 2;
+        }
     } else if (strcmp(argv[i], "--version") == 0 || strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-V") == 0) {
         fprintf(stdout, "v1.0.0\n");
         return 0;
@@ -197,5 +225,5 @@ int main (int argc, char **argv) {
     return 1;
   }
 
-  return tail_follow(fd, n);  
+  return tail_follow(fd, n, path);  
 }
