@@ -156,7 +156,8 @@ static int tail_follow(int fd, long n) {
 
 void help(void) {
     fprintf(stdout, "usage: pk [-n N] [FILE]\n\n");
-    fprintf(stdout, "flags: \t[-h | --help] help command\n\t\t[-vV] version\n");
+    fprintf(stdout, "flags: \t\t[-n N] number of lines (default: 10)\n\n");
+    fprintf(stdout, "commands: \t[-h | --help] help command\n\t\t[-vV] version\n");
 }
 
 int main (int argc, char **argv) {
